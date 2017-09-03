@@ -1,0 +1,36 @@
+version: '2'
+services:
+  db:
+    user: "1000:50"
+    build:
+      context: .
+      dockerfile: ./docker/mysql/Dockerfile
+    volumes:
+      - ./docker/mysql/volumes:/var/lib/mysql
+    extends:
+      file: ./docker/mysql/password.yml
+      service: password
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/rails/Dockerfile
+    command: bundle exec rails s -b '0.0.0.0' -p 3000
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+    volumes_from:
+      - bundle
+    volumes:
+      - ./productinfo_api:/productinfo_api
+    environment:
+      RAILS_ENV: development
+    extends:
+      file: ./docker/mysql/password.yml
+      service: password
+    depends_on:
+      - db
+  bundle:
+    image: busybox
+    volumes:
+      - ./productinfo_api/vendor/bundle:/productinfo_api/vendor/bundle
