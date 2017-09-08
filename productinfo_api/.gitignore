@@ -6,8 +6,9 @@
 
 # Ignore bundler config.
 /.bundle
-
+.ruby-version
 # Ignore all logfiles and tempfiles.
 /log/*
 !/log/.keep
 /tmp
+public/uploads/*
