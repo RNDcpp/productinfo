@@ -1,6 +1,6 @@
-class CreateStoreProductRelasions < ActiveRecord::Migration[5.1]
+class CreateStoreProductRelations < ActiveRecord::Migration[5.1]
   def change
-    create_table :store_product_relasions do |t|
+    create_table :store_product_relations do |t|
       t.references :store, foreign_key: true
       t.references :product, foreign_key: true
       t.integer :stock
