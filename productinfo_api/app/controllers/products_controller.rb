@@ -82,6 +82,6 @@ class ProductsController < ApplicationController
     
     def search_params
       puts(params)
-      params.permit(:q, :max_cost, :min_cost, :search_target)
+      params.permit(:q, :max_cost, :min_cost, :search_target, :store_id)
     end
 end

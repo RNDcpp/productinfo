@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'stores/search' => 'stores#search',as: :stores_search
+  get 'stores/:id/products' => 'stores#products',as: :store_products
+  post 'stores/:id/products' => 'stores#add_products',as: :store_add_products
   resources :stores
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

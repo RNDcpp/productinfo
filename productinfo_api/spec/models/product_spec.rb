@@ -40,7 +40,13 @@ describe "Products" do
       create(:product_fuga_fuga)
       create(:product_fuga_fuga_100)
       create(:product_fuga_fuga_1000)
-      create(:product_fuga_fuga_10000)
+      @product=create(:product_fuga_fuga_10000)
+      @store=create(:store)
+      StoreProductRelation.create(store:@store,product:@product,stock:12)
+    end
+    it "return /collect products list with store_id" do
+      products=Product.search({q:'fuga',search_target: 'name',store_id:@store.id})
+      expect(products.count).to eql(1)
     end
     it "return the collect number of products with all" do
       products=Product.all

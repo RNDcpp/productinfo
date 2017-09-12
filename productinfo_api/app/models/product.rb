@@ -7,6 +7,9 @@ class Product < ApplicationRecord
   has_many :stores,through: :store_product_relations
   def self.search(search_object)
     products=order('name')
+    if store_id = search_object[:store_id]
+      products=products.includes(:store_product_relations).where( store_product_relations: {store_id: store_id})
+    end
     if term = search_object[:q]
       range = search_object[:search_target]
       products=products.where(['name like ?',"%#{term}"]) if ['name','name_and_text'].include?(range)
