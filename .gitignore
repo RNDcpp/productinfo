@@ -2,3 +2,4 @@ docker/mysql/volumes
 Gemfile.lock
 productinfo_api/Gemfile.lock
 productinfo_api/vendor/
+productinfo_api/db/schema.rb

@@ -34,7 +34,8 @@ class ProductsController < ApplicationController
     respond_to do |format|
       if @product.save
         format.html { redirect_to @product, notice: 'Product was successfully created.' }
-        format.json { render :show, status: :created, location: @product }
+        format.json { render :show, status: :ok, location: @product }
+        #format.json { render json: @product, status: :ok, location: @product }
       else
         format.html { render :new }
         format.json { render json: @product.errors, status: :unprocessable_entity }
@@ -49,6 +50,7 @@ class ProductsController < ApplicationController
       if @product.update(product_params)
         format.html { redirect_to @product, notice: 'Product was successfully updated.' }
         format.json { render :show, status: :ok, location: @product }
+        #format.json { render json: @product, status: :ok, location: @product }
       else
         format.html { render :edit }
         format.json { render json: @product.errors, status: :unprocessable_entity }
@@ -74,10 +76,12 @@ class ProductsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def product_params
+      puts(params)
       params.require(:product).permit(:name, :image_uri, :text, :cost)
     end
     
     def search_params
-      params.require(:product).permit(:search_term, :max_cost, :min_cost, :search_target)
+      puts(params)
+      params.permit(:q, :max_cost, :min_cost, :search_target)
     end
 end
