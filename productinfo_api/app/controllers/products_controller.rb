@@ -1,9 +1,12 @@
 class ProductsController < ApplicationController
+  include Base64Converter
   before_action :set_product, only: [:show, :edit, :update, :destroy]
+  before_action :convert_base64_data, only:[:create,:update]
   
   # GET /products
   # GET /products.json
   def index
+    @product = Product.new
     @products = Product.all
   end
 
@@ -30,7 +33,7 @@ class ProductsController < ApplicationController
   def create
 
     @product = Product.new(product_params)
-
+    @product.image_uri=@image
     respond_to do |format|
       if @product.save
         format.html { redirect_to @product, notice: 'Product was successfully created.' }
@@ -47,7 +50,8 @@ class ProductsController < ApplicationController
   # PATCH/PUT /products/1.json
   def update
     respond_to do |format|
-      if @product.update(product_params)
+      # if @image is not nil, product is updated with @image
+      if @product.update(product_params) and ( @image==nil or @product.update( image_uri: @image ) )
         format.html { redirect_to @product, notice: 'Product was successfully updated.' }
         format.json { render :show, status: :ok, location: @product }
         #format.json { render json: @product, status: :ok, location: @product }
@@ -72,6 +76,14 @@ class ProductsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_product
       @product = Product.find(params[:id])
+    end
+    def convert_base64_data
+      if(img = params.require(:product).permit(:image_uri)[:image_uri])
+        @image = base64_conversion(img,"#{Product.last.id+1}")
+        puts(@image)
+      else
+        @image = nil
+      end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

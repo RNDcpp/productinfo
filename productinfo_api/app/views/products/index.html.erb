@@ -2,32 +2,11 @@
 
 <h1>Products</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Image uri</th>
-      <th>Text</th>
-      <th>Cost</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @products.each do |product| %>
-      <tr>
-        <td><%= product.name %></td>
-        <td><%= product.image_uri %></td>
-        <td><%= product.text %></td>
-        <td><%= product.cost %></td>
-        <td><%= link_to 'Show', product %></td>
-        <td><%= link_to 'Edit', edit_product_path(product) %></td>
-        <td><%= link_to 'Destroy', product, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Product', new_product_path %>
+<div id='new_product_pane' class='new'>
+  <div id='new_product_form_container' hidden>
+    <%= render 'form', {product: @product,element_id: 'newForm'} %>
+  </div>
+  <button id='new_product_pane_button'>
+    new
+  </button>
+</div>
