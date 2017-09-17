@@ -2,6 +2,11 @@
 
 <h1>Products</h1>
 
+<div id='search_product_pane' class='new'>
+  <div id='search_product_form_container' >
+    <%= render 'search_form', {element_id: 'searchForm'} %>
+  </div>
+</div>
 <div id='new_product_pane' class='new'>
   <div id='new_product_form_container' hidden>
     <%= render 'form', {product: @product,element_id: 'newForm'} %>

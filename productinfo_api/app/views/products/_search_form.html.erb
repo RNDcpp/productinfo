@@ -1,0 +1,27 @@
+
+<%= form_with(url:products_search_path,local: true,method: 'get', id: element_id) do |form| %>
+  <div class="field">
+    <%= form.label :q %>
+    <%= form.text_field :q, id: :search_query %>
+  </div>
+
+  <div class="field">
+    <%= form.label :min_cost %>
+    <%= form.number_field :min_cost, id: :search_min_cost%>
+  </div>
+
+  <div class="field">
+    <%= form.label :max_cost%>
+    <%= form.number_field :max_cost, id: :search_max_cost %>
+  </div>
+
+  <div class="field">
+    <%= form.label :search_target %>
+    <%= form.radio_button :search_target,"name" ,checked: "checked", class: "search-radio-button" %>name
+    <%= form.radio_button :search_target,"name_and_text" , class: "search-radio-button" %>name and text
+  </div>
+
+  <div class="actions">
+    <%= form.submit 'search', class: "submit-button",disable_with: "..."%>
+  </div>
+<% end %>

@@ -5,12 +5,28 @@
     //search form
     $("#searchForm").submit(function(event){
       event.preventDefault();
-      setAjax($(this))
+      setAjax($(this),{
+        beforeSend:function(xhr,settings){},
+        success:function(result,textStatus,error){
+          products_list=$("#products-list");
+          products_list.empty();
+          result.forEach(function(v,i){
+            productPane(v,products_list)
+          });
+        },
+        complete:function(xhr,settings){},
+        error:function(xhr,textStatus,error){}
+      })
     });
     //new form is to create new product data
     $("#newForm").submit(function(event){
       event.preventDefault();
-      setAjax($(this))
+      setAjax($(this),{
+        beforeSend:function(xhr,settings){},
+        success:function(result,textStatus,error){getAllProducts()},
+        complete:function(xhr,settings){$(this)[0].reset()},
+        error:function(xhr,textStatus,error){}
+      })
     });
     //new_product_pane_button is to open/close #newForm
     $("#new_product_pane_button").on('click',function(){
@@ -23,11 +39,11 @@
         console.log("setAttr hidden")
       }
     });
-    getAllProduct();
+    getAllProducts();
   });
   //get All Product Date with Ajax Get Request
   //get /products.json
-  function getAllProduct(){
+  function getAllProducts(){
     $.ajax({
       url:"/products.json",
       contentType:"application/json",
@@ -37,6 +53,7 @@
         console.log(textStatus);
         console.log(error);
         products_list=$("#products-list");
+        products_list.empty();
         result.forEach(
             function(v,i,c_ary){
               productPane(v,products_list);
@@ -117,14 +134,14 @@
   }
 
   //implement ajax request to specified form
-  function setAjax(form){
+  function setAjax(form,processes){
     button = $(form.find(".submit-button")[0]);
     method = form.attr("method");
 
     //convert image to base64
     //and append it to serialized form data array
     //(input type:file) is not included in form.serializeArray()
-    function addFileData(ary,form,callback){
+    function addFileData(ary,form,callback,processes){
       file_input=form.find('[type="file"]')[0];
       reader=new FileReader();
       if(file_input.files[0]!==undefined){
@@ -134,16 +151,16 @@
           e["value"]=event.target.result;
           console.log(event.target.result);
           ary.push(e);
-          callback(ary,form);
+          callback(ary,form,processes);
         };
         reader.readAsDataURL(file_input.files[0]);
       }else{
-        callback(ary,form);
+        callback(ary,form,processes);
       }
     }
 
     //convert form-data to processable formatted json
-    function processData(ary,form){
+    function processData(ary,form,processes){
       var data={};
       $.map(ary,function(v,i){
         console.log(v)
@@ -157,22 +174,30 @@
             if(data[nested_object]===undefined){
               data[nested_object]={};
             }
-            data[nested_object][nested_key]=v["value"];
+            if(v["value"]!==null){
+              data[nested_object][nested_key]=v["value"];
+            }
           }
       });
-      submitData(form,JSON.stringify(data));
+      submitData(form,JSON.stringify(data),processes);
     }
 
     var ary=form.serializeArray();
     if(form.attr("method")=="get"){
-      data=form.serialize();
-      submitData(form,data);
+      data=form.serializeArray();
+      query=[];
+      data.forEach(function(v,i){
+        if(v["value"]){
+          query.push(v["name"]+'='+v["value"]);
+        }
+      });
+      submitData(form,query.join('&'),processes);
     }else{
-      addFileData(ary,form,processData);
+      addFileData(ary,form,processData,processes);
     }
 
     //ajax request
-    function submitData(form,data){
+    function submitData(form,data,processes){
       $.ajax({
         url: form.attr("action"),
         dataType:"json",
@@ -182,6 +207,9 @@
         beforeSend: function(xhr,settings){
           //prevent from double sending
           button.attr("disabled",true);
+          if(processes['beforeSend']){
+            processes['beforeSend'](xhr,settings);
+          }
           console.log(data);
         },
         complete: function(xhr,settings){
@@ -189,17 +217,24 @@
           console.log(button);
           //eneble submit button
           button.removeAttr("disabled",false);
+          if(processes['complete']){
+            processes['complete'](xhr,settings);
+          }
         },
         success: function(result,textStatus,error){
-          //reset form data
-          form[0].reset();
           console.log(result);
           console.log(textStatus);
           console.log(error);
+          if(processes['success']){
+            processes['success'](result,textStatus,error);
+          }
         },
         error: function(xhr,textStatus,error){
           //TODO error handling 
           console.log(error);
+          if(processes['error']){
+            processes['error'](xhr,textStatus,error);
+          }
         }
       });
     }
