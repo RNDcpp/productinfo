@@ -24,7 +24,7 @@
       setAjax($(this),{
         beforeSend:function(xhr,settings){},
         success:function(result,textStatus,error){getAllProducts()},
-        complete:function(xhr,settings){$(this)[0].reset()},
+        complete:function(xhr,settings){$("#newForm")[0].reset()},
         error:function(xhr,textStatus,error){}
       })
     });
@@ -36,7 +36,14 @@
         console.log("removeAttr hidden");
       }else{
         form_pane.attr("hidden",true);
-        console.log("setAttr hidden")
+        console.log("setAttr hidden");
+      }
+    });
+    //edit_product_pane_button is to close #editForm
+    $("#edit_product_pane_button").on('click',function(){
+      form_pane=$("#edit_product_form_container");
+      if(form_pane.attr("hidden") === undefined){// if new form is hidden
+        form_pane.attr("hidden",true);
       }
     });
     getAllProducts();
@@ -88,6 +95,7 @@
       "class":"product-edit-button product-button",
       "data-id":data["id"],
       "data-cost":data["cost"],
+      "data-name":data["name"],
       "data-text":data["text"],
       "data-image-uri":data["image_uri"],
       on:{
@@ -95,6 +103,7 @@
           //create edit form
           openEditForm({
             id:$(this).data("id"),
+            name:$(this).data("name"),
             cost:$(this).data("cost"),
             text:$(this).data("text"),
             image_uri:$(this).data("image-uri")
@@ -125,12 +134,33 @@
   }
   //Create edit form pane to update a product
   function openEditForm(data){
+    /*
     data["id"];
     data["name"];
     data["cost"];
     data["text"];
     data["image_uri"];
-    //TODO
+    */
+    $("#edit_product_form_container").removeAttr("hidden");
+    edit_form=$("#editForm");
+    edit_form[0].reset();
+    edit_form.attr("action","/products/"+data["id"]+".json");
+    edit_form.attr("method","put");
+    ["name","cost","text"].forEach(function(v,i){
+      if(data[v]){
+        console.log(data[v])
+        $("input#editForm_product_"+v).val(data[v]);
+      }
+    });
+    edit_form.submit(function(event){
+      event.preventDefault();
+      setAjax($(this),{
+        beforeSend:function(xhr,settings){},
+        success:function(result,textStatus,error){getAllProducts()},
+        complete:function(xhr,settings){edit_form[0].reset()},
+        error:function(xhr,textStatus,error){}
+      })
+    });
   }
 
   //implement ajax request to specified form
@@ -183,10 +213,10 @@
     }
 
     var ary=form.serializeArray();
+    console.log(form.attr("method"))
     if(form.attr("method")=="get"){
-      data=form.serializeArray();
       query=[];
-      data.forEach(function(v,i){
+      ary.forEach(function(v,i){
         if(v["value"]){
           query.push(v["name"]+'='+v["value"]);
         }

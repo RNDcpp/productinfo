@@ -51,9 +51,10 @@ class ProductsController < ApplicationController
   def update
     respond_to do |format|
       # if @image is not nil, product is updated with @image
+      p product_params
       if @product.update(product_params) and ( @image==nil or @product.update( image_uri: @image ) )
         format.html { redirect_to @product, notice: 'Product was successfully updated.' }
-        format.json { render :show, status: :ok, location: @product }
+        format.json { render :show, status: :ok, location: @product}
         #format.json { render json: @product, status: :ok, location: @product }
       else
         format.html { render :edit }

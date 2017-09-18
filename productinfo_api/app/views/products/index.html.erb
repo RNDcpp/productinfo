@@ -15,5 +15,13 @@
     new
   </button>
 </div>
+<div id='edit_product_pane' class='new'>
+  <div id='edit_product_form_container' hidden>
+    <%= render 'form', {product: @product,element_id: 'editForm'} %>
+    <button id='edit_product_pane_button'>
+      cancel
+    </button>
+  </div>
+</div>
 <div id='products-list'>
 </div>
