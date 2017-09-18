@@ -18,6 +18,16 @@ body{
 button{
   background-color:$btn_color;
 }
+#notice{
+  display:inline-block;
+  position:fixed;
+  width:100%;
+  z-index:2000;
+  top:0px;
+  left:0px;
+  color:#fff;
+  background-color:rgba(255,0,0,0.5);
+}
 #main-container{
   background-color:$bg_color;
   display:inline-block;

@@ -418,6 +418,7 @@
         data: data,
         type: form.attr("method"),
         beforeSend: function(xhr,settings){
+          $("p#notice").empty();
           //prevent from double sending
           button.attr("disabled",true);
           if(processes['beforeSend']){
@@ -435,6 +436,7 @@
           }
         },
         success: function(result,textStatus,error){
+          $("p#notice").empty();
           console.log(result);
           console.log(textStatus);
           console.log(error);
@@ -446,7 +448,20 @@
           //TODO error handling 
           console.log(xhr);
           console.log(xhr.responseJSON);
-
+          notice="";
+          ary=[]
+          result=xhr.responseJSON;
+          for (key in result){
+            result[key].forEach(
+              function(e,i){
+                ary.push(key+'  :  '+e);
+              }
+            );
+          }
+          ary.forEach(
+              function(e,i){
+                $("p#notice").append($("<p></p>").text(e));
+              });
           console.log(textStatus);
           if(processes['error']){
             processes['error'](xhr,textStatus,error);
