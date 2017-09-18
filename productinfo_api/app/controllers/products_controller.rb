@@ -81,7 +81,7 @@ class ProductsController < ApplicationController
     end
     def convert_base64_data
       if(img = params.require(:product).permit(:image_uri)[:image_uri])
-        @image = base64_conversion(img,"#{Product.last.id+1}")
+        @image = base64_conversion(img,"#{(Product.last ? Product.last.id+1:1)}")
         puts(@image)
       else
         @image = nil
