@@ -3,7 +3,7 @@ class Product < ApplicationRecord
   validates :name, presence: true
   validates :name, length: {maximum: 100,too_long: 'name is too long'}
   validates :text, length: {maximum: 500,too_long: 'text is too long'}
-  has_many :store_product_relations
+  has_many :store_product_relations,dependent: :delete_all
   has_many :stores,through: :store_product_relations
   def self.search(search_object)
     products=order('name')
