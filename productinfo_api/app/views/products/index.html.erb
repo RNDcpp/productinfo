@@ -2,6 +2,14 @@
 
 <h1>Products</h1>
 
+<div id='delete_confirm_pane' class='new' hidden>
+  <p>Confirm to delete product</p>
+  <div id="delete_product_pane"></div>
+  <div class="confirm_buttons">
+    <button id="delete_button">delete</button>
+    <button id="delete_cancel_button">cancel</button>
+  </div>
+</div>
 <div id='search_product_pane' class='new'>
   <div id='search_product_form_container' >
     <%= render 'search_form', {element_id: 'searchForm'} %>

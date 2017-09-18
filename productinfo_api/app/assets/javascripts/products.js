@@ -97,7 +97,7 @@
       "data-cost":data["cost"],
       "data-name":data["name"],
       "data-text":data["text"],
-      "data-image-uri":data["image_uri"],
+      "data-image_uri":data["image_uri"],
       on:{
         click:function(event){
           //create edit form
@@ -106,7 +106,7 @@
             name:$(this).data("name"),
             cost:$(this).data("cost"),
             text:$(this).data("text"),
-            image_uri:$(this).data("image-uri")
+            image_uri:$(this).data("image_uri")
           });
         }
       }
@@ -115,10 +115,20 @@
     product_buttons.append($("<button></button>",{
       "class":"product-delete-button product-button",
       "data-id":data["id"],
+      "data-cost":data["cost"],
+      "data-name":data["name"],
+      "data-text":data["text"],
+      "data-image_uri":data["image_uri"],
       on:{
         click:function(event){
-          //create confirm 
-          confirmDeleteProduct($(this).data("id"));
+          //create edit form
+          confirmDeleteProduct({
+            id:$(this).data("id"),
+            name:$(this).data("name"),
+            cost:$(this).data("cost"),
+            text:$(this).data("text"),
+            image_uri:$(this).data("image_uri")
+          });
         }
       }
     }).text("delete"));
@@ -129,8 +139,37 @@
   }
 
   //Create confirm pane for delete a product
-  function confirmDeleteProduct(id){
-    //TODO
+  function confirmDeleteProduct(data){
+    $("#delete_confirm_pane").removeAttr("hidden");
+    $("#delete_product_pane").empty();
+    data["image_uri"]={url:data["image_uri"]}
+    productPane(data,$("#delete_product_pane"));
+    $("#delete_product_pane").find(".product-button-container").empty();
+    $("#delete_button").on({click:function(){
+      action="/products/"+data["id"]+".json";
+      $.ajax({
+        url:action,
+        type:"delete",
+        contentType:"application/json",
+        beforeSend:function(xhr,settings){
+          $("#delete_button").attr("disabled",true);
+        },
+        success:function(result,textStatus,error){
+          console.log(result);
+          $("#delete_confirm_pane").attr("hidden",true);
+          getAllProducts();
+        },
+        complete:function(xhr,settings){
+          $("#delete_button").attr("disabled",false);
+        },
+        error:function(xhr,textStatus,error){
+          console.log(error);
+        }
+      });
+    }});
+    $("#delete_cancel_button").on({click:function(){
+      $("#delete_confirm_pane").attr("hidden",true)
+    }});
   }
   //Create edit form pane to update a product
   function openEditForm(data){
