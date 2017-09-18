@@ -1,51 +1,55 @@
 <p id="notice"><%= notice %></p>
+<div id="main-container">
+<div id="products-container">
+  <h1 id="products-list-title">Products</h1>
 
-<h1>Products</h1>
-
-<div id='delete_confirm_pane' class='new' hidden>
-  <p>Confirm to delete product</p>
-  <div id="delete_product_pane"></div>
-  <div class="confirm_buttons">
-    <button id="delete_button">delete</button>
-    <button id="delete_cancel_button">cancel</button>
+  <div id='delete_confirm_pane' class='new' hidden>
+    <p>Confirm to delete product</p>
+    <div id="delete_product_pane"></div>
+    <div class="confirm_buttons">
+      <button id="delete_button">delete</button>
+      <button id="delete_cancel_button">cancel</button>
+    </div>
   </div>
-</div>
-<div id='search_product_pane' class='new'>
   <div id='search_product_form_container' >
     <%= render 'search_form', {element_id: 'searchForm'} %>
   </div>
-</div>
-<div id='new_product_pane' class='new'>
-  <div id='new_product_form_container' hidden>
-    <%= render 'form', {product: @product,element_id: 'newForm'} %>
-  </div>
-  <button id='new_product_pane_button'>
-    new
-  </button>
-</div>
-<div id='edit_product_pane' class='new'>
   <div id='edit_product_form_container' hidden>
+    <p>Edit Product</p>
+    <img id='edit_product_image' class="product-image">
     <%= render 'form', {product: @product,element_id: 'editForm'} %>
     <button id='edit_product_pane_button'>
       cancel
     </button>
   </div>
-</div>
-<div id='add_product_form_pane' class='new'>
   <div id='add_product_form_container' hidden>
     <p>Set Product to Store</p>
     <div id="add_product_pane"></div>
     <%= render 'add_to_store_form', {element_id: 'addForm'} %>
+    <p>Add to ... ( Store Candidates )</p>
     <div id='candidate-stores-list'></div>
     <button id='add_product_cancel_button'>
       cancel
     </button>
   </div>
+  <div id='products-list'>
+  </div>
+  <div id='new_product_pane' class='new'>
+    <div id='new_product_form_container' hidden>
+    <p>Create New Product</p>
+      <%= render 'form', {product: @product,element_id: 'newForm'} %>
+    </div>
+    <button id='new_product_pane_button'>
+      new
+    </button>
+  </div>
 </div>
-<div id='products-list'>
+<div id="stores-container">
+  <h1 id="stores-list-title">Stores</h1>
+  <div id='new_store_pane' class='new'>
+    <%= render 'store_form', {store: @store,element_id: 'newStoreForm'} %>
+  </div>
+  <div id='stores-list'>
+  </div>
 </div>
-<div id='new_store_pane' class='new'>
-  <%= render 'store_form', {store: @store,element_id: 'newStoreForm'} %>
-</div>
-<div id='stores-list'>
 </div>

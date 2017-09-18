@@ -74,7 +74,7 @@
               stores_list.append(
                   $("<a></a>",{
                     on:{click:function(){
-                      getStoreProducts(v["id"]);
+                      getStoreProducts(v["id"],v["name"]);
                     }}
                   }).text(v["name"])
                   );
@@ -103,6 +103,7 @@
             function(v,i,c_ary){
               productPane(v,products_list);
             });
+        $("#products-list-title").text("Products")
       },
       error: function(xhr,textStatus,error){
         //TODO error handling
@@ -112,7 +113,7 @@
   }
   //get All Product Date of the Specified Store with Ajax Get Request
   //get /stores/:id/products.json
-  function getStoreProducts(id){
+  function getStoreProducts(id,name){
     $.ajax({
       url:"/stores/"+id+"/products.json",
       contentType:"application/json",
@@ -129,6 +130,7 @@
               productPane(v,store_product_container);
               store_product_container.append($("<p></p>",{"class":"store-product-stock"}).text("stock:"+v["stock"]));
               products_list.append(store_product_container);
+              $("#products-list-title").text("Products in "+name)
             });
       },
       error: function(xhr,textStatus,error){
@@ -267,6 +269,7 @@
     data["image_uri"];
     */
     $("#edit_product_form_container").removeAttr("hidden");
+    $("#edit_product_image").attr("src",data["image_uri"]);
     edit_form=$("#editForm");
     edit_form[0].reset();
     edit_form.attr("action","/products/"+data["id"]+".json");
@@ -441,7 +444,10 @@
         },
         error: function(xhr,textStatus,error){
           //TODO error handling 
-          console.log(error);
+          console.log(xhr);
+          console.log(xhr.responseJSON);
+
+          console.log(textStatus);
           if(processes['error']){
             processes['error'](xhr,textStatus,error);
           }

@@ -1,7 +1,7 @@
 
 <%= form_with(url:products_search_path,local: true,method: 'get', id: element_id) do |form| %>
   <div class="field">
-    <%= form.label :q %>
+    <%= form.label :search_word %>
     <%= form.text_field :q, id: :search_query %>
   </div>
 
