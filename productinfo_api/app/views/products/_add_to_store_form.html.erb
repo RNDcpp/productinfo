@@ -1,0 +1,16 @@
+<%= form_with(url: '/',local: true,method: 'post', id: element_id) do |form| %>
+  <div class="field">
+    <%= form.hidden_field :product_id, id: :add_product_id %>
+  </div>
+  <div class="field">
+    <%= form.label :store_name %>
+    <p id="add_product_store_name"></p>
+  </div>
+  <div class="field">
+    <%= form.label :stock %>
+    <%= form.number_field :stock, id: :add_product_stock %>
+  </div>
+  <div class="actions">
+    <%= form.submit 'set', class: "submit-button",disable_with: "..."%>
+  </div>
+<% end %>

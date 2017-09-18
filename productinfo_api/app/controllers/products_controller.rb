@@ -7,6 +7,7 @@ class ProductsController < ApplicationController
   # GET /products.json
   def index
     @product = Product.new
+    @store=Store.new
     @products = Product.all
   end
 

@@ -75,7 +75,8 @@ class StoresController < ApplicationController
     puts('add_products')
     _params=add_products_params
     @rel=@store.store_product_relations.find_by(product_id:_params[:product_id])
-    @rel||=StoreProductRelation.new(product_id:_params[:product_id],store_id:@store.id,stock:_params[:stock])
+    @rel||=StoreProductRelation.new(product_id:_params[:product_id],store_id:@store.id)
+    @rel.stock=_params[:stock];
     puts(@rel)
     respond_to do |format|
       if @rel.save

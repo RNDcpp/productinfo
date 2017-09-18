@@ -1,0 +1,9 @@
+<%= form_with(model: store,url:"/stores.json",local: true,method: 'post', id: element_id) do |form| %>
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name, id: :store_name %>
+  </div>
+  <div class="actions">
+    <%= form.submit 'create', class: "submit-button",disable_with: "..."%>
+  </div>
+<% end %>

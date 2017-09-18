@@ -16,17 +16,17 @@
         },
         complete:function(xhr,settings){},
         error:function(xhr,textStatus,error){}
-      })
+      });
     });
     //new form is to create new product data
     $("#newForm").submit(function(event){
       event.preventDefault();
       setAjax($(this),{
         beforeSend:function(xhr,settings){},
-        success:function(result,textStatus,error){getAllProducts()},
-        complete:function(xhr,settings){$("#newForm")[0].reset()},
+        success:function(result,textStatus,error){getAllProducts();$("#newForm")[0].reset();},
+        complete:function(xhr,settings){},
         error:function(xhr,textStatus,error){}
-      })
+      });
     });
     //new_product_pane_button is to open/close #newForm
     $("#new_product_pane_button").on('click',function(){
@@ -46,8 +46,46 @@
         form_pane.attr("hidden",true);
       }
     });
+    $("#newStoreForm").submit(function(event){
+      event.preventDefault();
+      setAjax($(this),{
+        beforeSend:function(xhr,settings){},
+        success:function(result,textStatus,error){getAllStores();$("#newStoreForm")[0].reset();},
+        complete:function(xhr,settings){},
+        error:function(xhr,textStatus,error){}
+      })
+    });
+    getAllStores(); 
     getAllProducts();
   });
+  function getAllStores(){
+    $.ajax({
+      url:"/stores.json",
+      contentType:"application/json",
+      type:"get",
+      success: function(result,textStatus,error){
+        console.log(result);
+        console.log(textStatus);
+        console.log(error);
+        stores_list=$("#stores-list");
+        stores_list.empty();
+        result.forEach(
+            function(v,i,c_ary){
+              stores_list.append(
+                  $("<a></a>",{
+                    on:{click:function(){
+                      getStoreProducts(v["id"]);
+                    }}
+                  }).text(v["name"])
+                  );
+            });
+      },
+      error: function(xhr,textStatus,error){
+        //TODO error handling
+        console.log(error);
+      }
+    });
+  }
   //get All Product Date with Ajax Get Request
   //get /products.json
   function getAllProducts(){
@@ -64,6 +102,33 @@
         result.forEach(
             function(v,i,c_ary){
               productPane(v,products_list);
+            });
+      },
+      error: function(xhr,textStatus,error){
+        //TODO error handling
+        console.log(error);
+      }
+    });
+  }
+  //get All Product Date of the Specified Store with Ajax Get Request
+  //get /stores/:id/products.json
+  function getStoreProducts(id){
+    $.ajax({
+      url:"/stores/"+id+"/products.json",
+      contentType:"application/json",
+      type:"get",
+      success: function(result,textStatus,error){
+        console.log(result);
+        console.log(textStatus);
+        console.log(error);
+        products_list=$("#products-list");
+        products_list.empty();
+        result.forEach(
+            function(v,i,c_ary){
+              store_product_container=$("<div></div>",{"class":"store-product-container"});
+              productPane(v,store_product_container);
+              store_product_container.append($("<p></p>",{"class":"store-product-stock"}).text("stock:"+v["stock"]));
+              products_list.append(store_product_container);
             });
       },
       error: function(xhr,textStatus,error){
@@ -132,6 +197,27 @@
         }
       }
     }).text("delete"));
+    //append add store button to store product
+    product_buttons.append($("<button></button>",{
+      "class":"product-add-button product-button",
+      "data-id":data["id"],
+      "data-cost":data["cost"],
+      "data-name":data["name"],
+      "data-text":data["text"],
+      "data-image_uri":data["image_uri"],
+      on:{
+        click:function(event){
+          //create edit form
+          openAddForm({
+            id:$(this).data("id"),
+            name:$(this).data("name"),
+            cost:$(this).data("cost"),
+            text:$(this).data("text"),
+            image_uri:$(this).data("image_uri")
+          });
+        }
+      }
+    }).text("set to Store"));
 
     product_info_pane.append(product_buttons);//append product_buttons to product_info_pane
     product_pane.append(product_info_pane);
@@ -201,6 +287,61 @@
       })
     });
   }
+  //Create add product to store form pane to update a product
+  function openAddForm(data){
+    /*
+    data["id"];
+    data["name"];
+    data["cost"];
+    data["text"];
+    data["image_uri"];
+    */
+    $("#add_product_form_container").removeAttr("hidden");
+    add_form=$("#addForm");
+    add_form[0].reset();
+    data["image_uri"]={url:data["image_uri"]}
+    $("#add_product_pane").empty();
+    productPane(data,$("#add_product_pane"));
+    $("#add_product_pane").find(".product-button-container").empty();
+    $("input#add_product_id").val(data['id']);
+    $.ajax({
+      url:'/stores.json',
+      type:'get',
+      success:function(result,textStatus,error){
+        $("#candidate-stores-list").empty();
+        candidate_list=$("<ul></ul>");
+        result.forEach(function(e,i){
+          if(e['stock']===undefined){
+            e['stock']=0;
+          }
+          li=$("<li></li>",
+              {
+                "class":"candidate-li",
+                on:{
+                  click:function(){
+                    $("#add_product_store_name").text(e['name']);
+                    add_form.attr('action','/stores/'+e['id']+'/products.json');
+                  }
+                }
+              }
+              );
+          li.text(e['name']);
+          candidate_list.append(li);
+        });
+        $("#candidate-stores-list").append(candidate_list);
+      }
+    });
+    $("#add_product_cancel_button").on({click:function(){$("#add_product_form_container").attr("hidden",true);}});
+    add_form.submit(function(event){
+      event.preventDefault();
+      setAjax($(this),{
+        beforeSend:function(xhr,settings){},
+        success:function(result,textStatus,error){getAllProducts();$("#add_product_form_container").attr('hidden',true)},
+        complete:function(xhr,settings){add_form[0].reset()},
+        error:function(xhr,textStatus,error){}
+      })
+    });
+  }
 
   //implement ajax request to specified form
   function setAjax(form,processes){
@@ -212,20 +353,20 @@
     //(input type:file) is not included in form.serializeArray()
     function addFileData(ary,form,callback,processes){
       file_input=form.find('[type="file"]')[0];
-      reader=new FileReader();
-      if(file_input.files[0]!==undefined){
-        reader.onload = function(event){
-          var e={};
-          e["name"]=$(file_input).attr("name");
-          e["value"]=event.target.result;
-          console.log(event.target.result);
-          ary.push(e);
+        reader=new FileReader();
+        if(file_input && file_input.files[0]!==undefined){
+          reader.onload = function(event){
+            var e={};
+            e["name"]=$(file_input).attr("name");
+            e["value"]=event.target.result;
+            console.log(event.target.result);
+            ary.push(e);
+            callback(ary,form,processes);
+          };
+          reader.readAsDataURL(file_input.files[0]);
+        }else{
           callback(ary,form,processes);
-        };
-        reader.readAsDataURL(file_input.files[0]);
-      }else{
-        callback(ary,form,processes);
-      }
+        }
     }
 
     //convert form-data to processable formatted json

@@ -31,5 +31,21 @@
     </button>
   </div>
 </div>
+<div id='add_product_form_pane' class='new'>
+  <div id='add_product_form_container' hidden>
+    <p>Set Product to Store</p>
+    <div id="add_product_pane"></div>
+    <%= render 'add_to_store_form', {element_id: 'addForm'} %>
+    <div id='candidate-stores-list'></div>
+    <button id='add_product_cancel_button'>
+      cancel
+    </button>
+  </div>
+</div>
 <div id='products-list'>
+</div>
+<div id='new_store_pane' class='new'>
+  <%= render 'store_form', {store: @store,element_id: 'newStoreForm'} %>
+</div>
+<div id='stores-list'>
 </div>
